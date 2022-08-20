@@ -7,7 +7,9 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
+  Alert,
 } from "react-native";
+import { Fontisto } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { theme } from "./colors";
 
@@ -56,6 +58,24 @@ export default function App() {
     setText("");
   };
 
+  //삭제
+  const deleteToDo = (key) => {
+    Alert.alert("Delete to do?", "Are you sure?", [
+      { text: "Cancel" },
+      {
+        text: "I`m Sure",
+        style: "destructive",
+        onPress: () => {
+          const newTodos = { ...toDos };
+          delete newTodos[key];
+          setToDos(newTodos);
+          saveToDos(newTodos);
+        },
+      },
+    ]);
+    return;
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -91,6 +111,9 @@ export default function App() {
           toDos[key].working === working ? (
             <View style={styles.toDo} key={key}>
               <Text style={styles.toDoText}>{toDos[key].text}</Text>
+              <TouchableOpacity onPress={() => deleteToDo(key)}>
+                <Fontisto name="trash" size={18} color="white" />
+              </TouchableOpacity>
             </View>
           ) : null
         )}
@@ -128,6 +151,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   toDoText: { color: "white", fontSize: 16, fontWeight: "500" },
 });
